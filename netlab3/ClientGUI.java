@@ -1,4 +1,3 @@
-
 package netlab3;
 
 import javax.swing.*;
@@ -26,7 +25,6 @@ public class ClientGUI {
         frame.setSize(400, 300);
         frame.setLayout(new BorderLayout());
 
-        // Name Input Panel
         JPanel namePanel = new JPanel();
         nameField = new JTextField(15);
         connectButton = new JButton("Connect");
@@ -34,12 +32,10 @@ public class ClientGUI {
         namePanel.add(nameField);
         namePanel.add(connectButton);
 
-        // Player List Panel (Lobby)
         playerListArea = new JTextArea();
         playerListArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(playerListArea);
 
-        // Join Game Button
         joinGameButton = new JButton("Join Game");
         joinGameButton.setEnabled(false);
 
@@ -51,11 +47,19 @@ public class ClientGUI {
         joinGameButton.addActionListener(e -> joinGame());
 
         frame.setVisible(true);
+
+        // Handle window closing event to disconnect
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                disconnectFromServer();
+            }
+        });
     }
 
     private void connectToServer() {
         try {
-            socket = new Socket("localhost", 9090);
+            socket = new Socket("172.20.10.8", 9090);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -73,6 +77,13 @@ public class ClientGUI {
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame, "Failed to connect to server.");
         }
+    }
+
+    private void disconnectFromServer() {
+        if (out != null) {
+            out.println("DISCONNECT");
+        }
+        System.exit(0);
     }
 
     private void listenToServer() {
@@ -126,6 +137,3 @@ public class ClientGUI {
     }
     
 }
-
-
-
