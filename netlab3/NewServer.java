@@ -1,6 +1,7 @@
 package netlab3;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -12,15 +13,22 @@ public class NewServer {
     private static List<NewClient> waitingRoom = new ArrayList<>();
     private static boolean timerStarted = false;
 
-    public static void main(String[] args) throws IOException {
-        ServerSocket serverSocket = new ServerSocket(9090);
-        System.out.println("Server is running...");
+    public static void main(String[] args) {
+        try {
+            String hostIP = InetAddress.getLocalHost().getHostAddress();
+            ServerSocket serverSocket = new ServerSocket(9090, 50, InetAddress.getByName(hostIP));
 
-        while (true) {
-            Socket clientSocket = serverSocket.accept();
-            NewClient clientThread = new NewClient(clientSocket, clients);
-            clients.add(clientThread);
-            new Thread(clientThread).start();
+            System.out.println("Server is running on IP: " + hostIP + " and port 9090");
+
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                NewClient clientThread = new NewClient(clientSocket, clients);
+                clients.add(clientThread);
+                new Thread(clientThread).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Failed to start the server.");
         }
     }
 
@@ -33,6 +41,13 @@ public class NewServer {
         for (NewClient client : clients) {
             client.send(playerList.toString());
         }
+    }
+
+    public static synchronized void removeClient(NewClient client) {
+        clients.remove(client);
+        waitingRoom.remove(client);
+        updatePlayerList();
+        System.out.println(client.getName() + " has left the game.");
     }
 
     public static synchronized void addToWaitingRoom(NewClient client) {
