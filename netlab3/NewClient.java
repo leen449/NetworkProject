@@ -1,4 +1,3 @@
-
 package netlab3;
 
 import java.io.BufferedReader;
@@ -41,7 +40,7 @@ class NewClient implements Runnable {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(name + " disconnected.");
         } finally {
             closeConnections();
         }
@@ -53,6 +52,7 @@ class NewClient implements Runnable {
 
     private void closeConnections() {
         try {
+            NewServer.removeClient(this);
             in.close();
             out.close();
             client.close();
