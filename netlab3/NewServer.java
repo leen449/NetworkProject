@@ -76,6 +76,12 @@ public class NewServer {
             client.send(waitingList.toString());
         }
     }
+    
+    public static synchronized void removeFromWaitingRoom(NewClient client) {
+    waitingRoom.remove(client);
+    updateWaitingRoomList();
+    System.out.println(client.getName() + " left the waiting room.");
+}
 
     private static void startCountdown() {
         new Thread(() -> {
