@@ -27,24 +27,27 @@ class NewClient implements Runnable {
     }
 
     public void run() {
-        try {
-            name = in.readLine();
-            System.out.println(name + " has connected.");
-            NewServer.updatePlayerList();
+    try {
+        name = in.readLine();
+        System.out.println(name + " has connected.");
+        NewServer.updatePlayerList();
 
-            while (true) {
-                String message = in.readLine();
-                if (message == null) break;
-                if (message.equals("JOIN_GAME")) {
-                    NewServer.addToWaitingRoom(this);
-                }
+        while (true) {
+            String message = in.readLine();
+            if (message == null) break;
+            
+            if (message.equals("JOIN_GAME")) {
+                NewServer.addToWaitingRoom(this);
+            } else if (message.equals("LEAVE_WAITING_ROOM")) {
+                NewServer.removeFromWaitingRoom(this);
             }
-        } catch (IOException e) {
-            System.out.println(name + " disconnected.");
-        } finally {
-            closeConnections();
         }
-    }
+    } catch (IOException e) {
+        System.out.println(name + " disconnected.");
+    } finally {
+        closeConnections();
+}
+}
 
     public void send(String message) {
         out.println(message);
