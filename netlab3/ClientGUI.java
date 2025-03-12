@@ -20,6 +20,7 @@ public class ClientGUI {
     private JFrame waitingRoomFrame;
 
     public ClientGUI() {
+        
         frame = new JFrame("Game Lobby");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 300);
@@ -48,9 +49,11 @@ public class ClientGUI {
 
         frame.setVisible(true);
 
-        // Handle window closing event to disconnect
+        
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
+           
+           
+            
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 disconnectFromServer();
             }
@@ -123,14 +126,24 @@ public class ClientGUI {
         showWaitingRoom();
     }
     
-     private void showWaitingRoom() {
-        waitingRoomFrame = new JFrame("Waiting Room");
-        waitingRoomFrame.setSize(300, 200);
-        waitingListArea = new JTextArea();
-        waitingListArea.setEditable(false);
-        waitingRoomFrame.add(new JScrollPane(waitingListArea), BorderLayout.CENTER);
-        waitingRoomFrame.setVisible(true);
-    }
+   private void showWaitingRoom() {
+    waitingRoomFrame = new JFrame("Waiting Room");
+    waitingRoomFrame.setSize(300, 200);
+    waitingListArea = new JTextArea();
+    waitingListArea.setEditable(false);
+    waitingRoomFrame.add(new JScrollPane(waitingListArea), BorderLayout.CENTER);
+    
+  
+    waitingRoomFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+        @Override
+        public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+            out.println("LEAVE_WAITING_ROOM"); 
+            frame.setVisible(true); 
+        }
+    });
+
+    waitingRoomFrame.setVisible(true);
+}
 
     public static void main(String[] args) {
         new ClientGUI();
